@@ -7,13 +7,13 @@
         <v-toolbar-items class="hidden-sm-and-down">
           <v-btn
             v-if="!bool_login"
-            @click="d_login = true"
+            @click="v_login = true"
             color="cyan darken-1"
             >Iniciar Sesión</v-btn
           >
-          <!-- Ventana iniciar sesión -->
 
-          <v-dialog v-model="d_login" max-width="550px" persistent>
+          <!-- Ventana iniciar sesión -->
+          <v-dialog v-model="v_login" max-width="550px" persistent>
             <v-card>
               <v-card-title>
                 <span class="headline">Iniciar sesión</span>
@@ -69,8 +69,8 @@
                   >Iniciar Sesión</v-btn
                 >
 
-                <!-- Botón de cerrar -->
-                <v-btn color="cyan darken-1" flat @click="cerrar_login"
+                <!-- Botón de cerrar la ventana -->
+                <v-btn color="cyan darken-1" text @click="cerrar_login"
                   >Cerrar</v-btn
                 >
               </v-card-actions>
@@ -81,14 +81,14 @@
 
           <v-btn
             v-if="!bool_login"
-            @click="d_registrarse = true"
+            @click="v_register = true"
             color="cyan darken-1"
             light
             >Registrarse</v-btn
           >
 
           <!-- Ventana registro -->
-          <v-dialog v-model="d_registrarse" max-width="550px" persistent>
+          <v-dialog v-model="v_register" max-width="550px" persistent>
             <v-card>
               <v-card-title>
                 <span class="headline">Registro</span>
@@ -101,7 +101,7 @@
                     <v-flex xs12 sm6 md6>
                       <v-text-field
                         prepend-icon="mdi-account-circle"
-                        v-model="nombre_registrar"
+                        v-model="user_register"
                         label="Usuario"
                         type="text"
                         v-on:keyup.enter="registrar"
@@ -127,7 +127,7 @@
                     <v-flex xs12 sm6 md6>
                       <v-text-field
                         prepend-icon="mdi-account"
-                        v-model="nombrecompleto_registrar"
+                        v-model="name_register"
                         label="Nombre"
                         type="text"
                         min="1"
@@ -154,12 +154,12 @@
                 <v-spacer></v-spacer>
 
                 <!-- Botón registro -->
-                <v-btn color="cyan darken-1" flat @click="registrar"
+                <v-btn color="cyan darken-1" text @click="registrar"
                   >Registrarse</v-btn
                 >
 
                 <!-- Botón cerrar registro -->
-                <v-btn color="cyan darken-1" flat @click="cerrar_registrar"
+                <v-btn color="cyan darken-1" text @click="cerrar_registrar"
                   >Cerrar</v-btn
                 >
               </v-card-actions>
@@ -195,31 +195,6 @@
           Close
         </v-btn>
       </v-snackbar>
-      <v-snackbar
-        v-model="snackbarNyte"
-        :timeout="timeout"
-        color="#cyan darken-1"
-        top
-        center
-      >
-        {{ textActividad }}
-        <v-btn color="#cyan darken-1" text @click="snackbarNyte = false">
-          Close
-        </v-btn>
-      </v-snackbar>
-
-      <v-snackbar
-        v-model="snackbarPuntuar"
-        :timeout="timeout"
-        color="#cyan darken-1"
-        top
-        center
-      >
-        {{ textPuntuar }}
-        <v-btn color="#cyan darken-1" text @click="snackbarPuntuar = false">
-          Close
-        </v-btn>
-      </v-snackbar>
 
       <v-content v-if="!bool_login">
         <img
@@ -238,49 +213,33 @@
         /></v-layout>
 
         <v-layout justify-center align-start>
-          <v-card height="100px" width="950px"
+          <v-card height="100px" width="550px"
             ><v-spacer></v-spacer>
             <v-toolbar color="#cyan darken-1" height="100px" width="1110px">
-              <v-btn @click="recomendarMio" color="#cyan darken-1"
-                >Histórico de actividades</v-btn
-              >
               <v-btn
                 color="#cyan darken-1"
                 @click="
-                  (puntuando = false),
-                    (recomendandoYo = false),
-                    (recomendandoResto = false),
-                    (recomendandoIngre = true),
-                    (aleatorio = false),
-                    (array = [])
+                  (caracActividad = true), (aleatorio = false), (array = [])
                 "
-                >Actividad por características
-                <!--Recomendar por ingredientes --></v-btn
+                >Actividad por características</v-btn
               >
               <v-btn color="#cyan darken-1" @click="actividadAzar"
                 >Actividad al azar</v-btn
-              >
-              <v-btn
-                color="#cyan darken-1"
-                @click="
-                  (puntuando = true),
-                    (recomendandoYo = false),
-                    (recomendandoResto = false),
-                    (recomendandoIngre = false),
-                    (aleatorio = false)
-                "
-                >Valorar actividad</v-btn
               >
             </v-toolbar>
           </v-card>
         </v-layout>
 
-        <v-content v-if="recomendandoIngre">
+        <v-content v-if="caracActividad">
           <v-container fill-height fluid>
             <v-row align="center" justify="center">
               <v-layout wrap text-center align-center justify-center>
-                <v-toolbar height="400px" width="750px" color="#cyan darken-1">
-                  <v-col>
+                <v-card height="100px" width="750px" color="#cyan darken-1">
+                  <v-toolbar
+                    height="100px"
+                    width="750px"
+                    color="#cyan darken-1"
+                  >
                     <v-toolbar-title>
                       <v-select
                         outlined
@@ -292,81 +251,582 @@
                       ></v-select> </v-toolbar-title
                     ><v-spacer></v-spacer>
 
-                    <v-toolbar-title>
-                      <v-select
-                        outlined
-                        v-model="modal"
-                        :items="modalidades"
-                        menu-props="auto"
-                        label="Modalidad"
-                        hide-details
-                      ></v-select> </v-toolbar-title
-                    ><v-spacer></v-spacer>
-
-                    <v-toolbar-title>
-                      <v-select
-                        outlined
-                        v-model="prec"
-                        :items="precios"
-                        menu-props="auto"
-                        label="Precio"
-                        hide-details
-                      ></v-select> </v-toolbar-title
-                    ><v-spacer></v-spacer>
-
-                    <v-toolbar-title>
-                      <v-select
-                        outlined
-                        v-model="locali"
-                        :items="localizaciones"
-                        menu-props="auto"
-                        label="Localización"
-                        hide-details
-                      ></v-select> </v-toolbar-title
-                    ><v-spacer></v-spacer>
-
-                    <v-toolbar-title>
-                      <v-select
-                        outlined
-                        v-model="afis"
-                        :items="actividadesFisicas"
-                        menu-props="auto"
-                        label="Actividad Física"
-                        hide-details
-                      ></v-select> </v-toolbar-title
-                    ><v-spacer></v-spacer>
-                  </v-col>
-
-                  <v-col>
-                    <v-toolbar-title>
-                      <v-btn
-                        color="#cyan darken-1"
-                        @click="buscarActividadCaracteristicas"
-                        >Buscar actividad</v-btn
-                      >
-                    </v-toolbar-title>
-                  </v-col>
-                </v-toolbar>
+                    <v-col>
+                      <v-toolbar-title>
+                        <v-btn
+                          color="#cyan darken-1"
+                          @click="buscarActividadCaracteristicas"
+                          >Buscar actividad</v-btn
+                        >
+                      </v-toolbar-title>
+                    </v-col>
+                  </v-toolbar>
+                </v-card>
               </v-layout>
             </v-row>
           </v-container>
-
           <v-container grid-list-md text-xs-center fluid pa-12>
             <v-layout row wrap fill-height fill-width>
               <v-flex v-for="(item, index) in array" v-bind:key="index">
                 <v-card class="mx-auto" max-width="900">
-                  <v-img
-                    src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                    height="200px"
+                 <v-img
+                    v-if="item.nombre === 'Visitar la catedral de León'"
+                    src="../assets/2.jpg"
+                    height="400px"
                   ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Visitar la Basílica de San Isidoro'
+                    "
+                    src="../assets/1.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Visitar la Casa Botines de Gaudí'
+                    "
+                    src="../assets/3.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Visitar el Palacio de los Guzmanes'
+                    "
+                    src="../assets/5.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Convento San Marcos'"
+                    src="../assets/4.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar el Palacio Conde Luna'"
+                    src="../assets/6.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar el centro de León'"
+                    src="../assets/7.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Ir al museo MUSAC'"
+                    src="../assets/8.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Ir al museo de León'"
+                    src="../assets/9.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Ir al museo de la fauna salvaje'
+                    "
+                    src="../assets/10.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Pasear por el parque de la Candamia'
+                    "
+                    src="../assets/11.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Correr por el parque de la Candamia'
+                    "
+                    src="../assets/11.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre ===
+                        'Pasear en bici por el parque de la Candamia'
+                    "
+                    src="../assets/11.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Pasear por el parque La Granja'"
+                    src="../assets/12.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Correr por el parque La Granja'"
+                    src="../assets/12.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Pasear en bici por el parque La Granja'
+                    "
+                    src="../assets/12.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Hacer deporte en exteriores'"
+                    src="../assets/13.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Hacer deporte en casa'"
+                    src="../assets/13.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Hacer la ruta de las Zancas'"
+                    src="../assets/14.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Ir al parque acuático Isla León'
+                    "
+                    src="../assets/15.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Hacer una cata de vinos'"
+                    src="../assets/7.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Ir al cine'"
+                    src="../assets/17.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Ir a mirar un partido'"
+                    src="../assets/16.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Ir al centro comercial'"
+                    src="../assets/18.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Tomar el sol'"
+                    src="../assets/19.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Jugar a juegos de mesa'"
+                    src="../assets/20.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Ir a los karts'"
+                    src="../assets/21.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Hacer voluntariado'"
+                    src="../assets/22.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Ir al laser tag'"
+                    src="../assets/23.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Volar una cometa'"
+                    src="../assets/24.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Leer un libro'"
+                    src="../assets/25.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Escuchar música o un podcast'"
+                    src="../assets/26.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Cocinar'"
+                    src="../assets/27.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Mirar la tele, Netflix, …'"
+                    src="../assets/28.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre ===
+                        'Tocar algún instrumento o aprender a hacerlo'
+                    "
+                    src="../assets/29.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre ===
+                        'Aprender un nuevo idioma o un lenguaje de programación'
+                    "
+                    src="../assets/30.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Organizar, ordenar o limpiar la casa'
+                    "
+                    src="../assets/31.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Hacer manualidades'"
+                    src="../assets/32.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Pintar'"
+                    src="../assets/33.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Hacer una visita virtual a un museo'
+                    "
+                    src="../assets/34.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Jugar a un videojuego'"
+                    src="../assets/35.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Hacer un puzle'"
+                    src="../assets/36.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre ===
+                        'Hacer una videollamada con amigos o familiares'
+                    "
+                    src="../assets/37.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Hacer un curso online'"
+                    src="../assets/38.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Mirar las estrellas'"
+                    src="../assets/39.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Ir a una cafetería'"
+                    src="../assets/7.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Ir de tapas'"
+                    src="../assets/7.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Ir a un restaurante'"
+                    src="../assets/7.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Ir al gimnasio'"
+                    src="../assets/40.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Astorga'"
+                    src="../assets/41.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar las Médulas'"
+                    src="../assets/42.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Ponferrada'"
+                    src="../assets/43.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Visitar la cueva de Valporquero'
+                    "
+                    src="../assets/44.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Riaño'"
+                    src="../assets/45.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Babia'"
+                    src="../assets/46.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar las Tuerces'"
+                    src="../assets/47.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Pedraza'"
+                    src="../assets/48.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar La Alberca'"
+                    src="../assets/49.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Visitar el parque de los Picos de Europa'
+                    "
+                    src="../assets/50.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Soria'"
+                    src="../assets/51.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Puebla de Sanabria'"
+                    src="../assets/52.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Segovia'"
+                    src="../assets/53.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Arribes del Duero'"
+                    src="../assets/54.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar las cascadas de Burgos'"
+                    src="../assets/55.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Valladolid'"
+                    src="../assets/56.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Candelario'"
+                    src="../assets/57.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Ciudad Rodrigo'"
+                    src="../assets/58.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Mogarraz'"
+                    src="../assets/59.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Penalba de Santiago'"
+                    src="../assets/60.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Sepúlveda'"
+                    src="../assets/61.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Ayllon'"
+                    src="../assets/62.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Maderuelo'"
+                    src="../assets/63.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Ureña'"
+                    src="../assets/64.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Frias'"
+                    src="../assets/65.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Medinaceli'"
+                    src="../assets/66.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Covarrubias'"
+                    src="../assets/67.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Vinuesa'"
+                    src="../assets/68.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Ledesma'"
+                    src="../assets/69.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Lerma'"
+                    src="../assets/70.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Miranda del Castañar'"
+                    src="../assets/71.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Yanguas'"
+                    src="../assets/72.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Caleruega'"
+                    src="../assets/73.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Visitar Castrillo de los Polvazares'
+                    "
+                    src="../assets/74.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="
+                      item.nombre === 'Visitar Monteagudo de las Vicarias'
+                    "
+                    src="../assets/75.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img
+                    v-else-if="item.nombre === 'Visitar Bonilla de la Sierra'"
+                    src="../assets/76.jpg"
+                    height="400px"
+                  ></v-img>
+
+                  <v-img v-else src="../assets/2.jpg" height="400px"></v-img>
+                  
                   <v-card-title>{{ item.nombre }}</v-card-title>
-                  <v-card-subtitle>
-                    Descripción: {{ item.descripcion }}
-                  </v-card-subtitle>
                 </v-card>
               </v-flex>
             </v-layout>
           </v-container>
+          <!-- Aquí va lo de crear las cards -->
         </v-content>
 
         <v-content v-if="aleatorio">
@@ -598,19 +1058,27 @@
                   ></v-img>
 
                   <v-img
-                    v-else-if="item.nombre === 'Tocar algún instrumento o aprender a hacerlo'"
+                    v-else-if="
+                      item.nombre ===
+                        'Tocar algún instrumento o aprender a hacerlo'
+                    "
                     src="../assets/29.jpg"
                     height="400px"
                   ></v-img>
 
                   <v-img
-                    v-else-if="item.nombre === 'Aprender un nuevo idioma o un lenguaje de programación'"
+                    v-else-if="
+                      item.nombre ===
+                        'Aprender un nuevo idioma o un lenguaje de programación'
+                    "
                     src="../assets/30.jpg"
                     height="400px"
                   ></v-img>
 
                   <v-img
-                    v-else-if="item.nombre === 'Organizar, ordenar o limpiar la casa'"
+                    v-else-if="
+                      item.nombre === 'Organizar, ordenar o limpiar la casa'
+                    "
                     src="../assets/31.jpg"
                     height="400px"
                   ></v-img>
@@ -628,7 +1096,9 @@
                   ></v-img>
 
                   <v-img
-                    v-else-if="item.nombre === 'Hacer una visita virtual a un museo'"
+                    v-else-if="
+                      item.nombre === 'Hacer una visita virtual a un museo'
+                    "
                     src="../assets/34.jpg"
                     height="400px"
                   ></v-img>
@@ -646,7 +1116,10 @@
                   ></v-img>
 
                   <v-img
-                    v-else-if="item.nombre === 'Hacer una videollamada con amigos o familiares'"
+                    v-else-if="
+                      item.nombre ===
+                        'Hacer una videollamada con amigos o familiares'
+                    "
                     src="../assets/37.jpg"
                     height="400px"
                   ></v-img>
@@ -706,7 +1179,9 @@
                   ></v-img>
 
                   <v-img
-                    v-else-if="item.nombre === 'Visitar la cueva de Valporquero'"
+                    v-else-if="
+                      item.nombre === 'Visitar la cueva de Valporquero'
+                    "
                     src="../assets/44.jpg"
                     height="400px"
                   ></v-img>
@@ -742,7 +1217,9 @@
                   ></v-img>
 
                   <v-img
-                    v-else-if="item.nombre === 'Visitar el parque de los Picos de Europa'"
+                    v-else-if="
+                      item.nombre === 'Visitar el parque de los Picos de Europa'
+                    "
                     src="../assets/50.jpg"
                     height="400px"
                   ></v-img>
@@ -819,14 +1296,13 @@
                     height="400px"
                   ></v-img>
 
-
                   <v-img
                     v-else-if="item.nombre === 'Visitar Maderuelo'"
                     src="../assets/63.jpg"
                     height="400px"
                   ></v-img>
 
-                    <v-img
+                  <v-img
                     v-else-if="item.nombre === 'Visitar Ureña'"
                     src="../assets/64.jpg"
                     height="400px"
@@ -887,13 +1363,17 @@
                   ></v-img>
 
                   <v-img
-                    v-else-if="item.nombre === 'Visitar Castrillo de los Polvazares'"
+                    v-else-if="
+                      item.nombre === 'Visitar Castrillo de los Polvazares'
+                    "
                     src="../assets/74.jpg"
                     height="400px"
                   ></v-img>
 
                   <v-img
-                    v-else-if="item.nombre === 'Visitar Monteagudo de las Vicarias'"
+                    v-else-if="
+                      item.nombre === 'Visitar Monteagudo de las Vicarias'
+                    "
                     src="../assets/75.jpg"
                     height="400px"
                   ></v-img>
@@ -904,13 +1384,10 @@
                     height="400px"
                   ></v-img>
 
-
-
-
                   <v-img v-else src="../assets/2.jpg" height="400px"></v-img>
                   <v-card-title>{{ item.nombre }}</v-card-title>
                   <v-card-subtitle>
-                   <!-- {{ item.descripción }} -->
+                    <!-- {{ item.descripción }} -->
                   </v-card-subtitle>
                   <v-card-actions> </v-card-actions>
                 </v-card>
@@ -918,71 +1395,6 @@
             </v-layout>
           </v-container>
         </v-content>
-
-        <v-content v-if="recomendandoYo">
-          <v-container grid-list-md text-xs-center fluid pa-12>
-            <v-layout row wrap fill-height fill-width>
-              <v-flex v-for="(item, index) in array" v-bind:key="index">
-                <v-card
-                  elevation="18"
-                  dark
-                  style="background: #cyan darken-1;
-    background: -webkit-linear-gradient(to right, #cyan darken-1, #cyan darken-1, #cyan darken-1);
-    background: linear-gradient(to right,  #cyan darken-1, #cyan darken-1, #cyan darken-1);"
-                >
-                  <v-card-title>{{ item.nombre }}</v-card-title>
-                  <v-card-subtitle>
-                    Descripción: {{ item.descripcion }}
-                  </v-card-subtitle>
-                </v-card>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-content>
-
-        <v-content v-if="puntuando" justify-center align-center>
-          <v-container
-            grid-list-md
-            text-xs-center
-            fluid
-            pa-12
-            align-center
-            justify-center
-          >
-            <v-layout wrap text-center align-center justify-center>
-              <v-card height="100px" width="750px" color="#cyan darken-1">
-                <v-toolbar height="100px" width="750px" color="#cyan darken-1">
-                  <v-toolbar-title>
-                    <v-select
-                      outlined
-                      v-model="e1"
-                      :items="actividades"
-                      menu-props="auto"
-                      label="Actividad"
-                      hide-details
-                    ></v-select> </v-toolbar-title
-                  ><v-spacer></v-spacer>
-
-                  <v-toolbar-title>
-                    <v-text-field
-                      v-model="puntuacion"
-                      type="number"
-                      label="Puntuación(1-10)"
-                      min="0"
-                      max="10"
-                    ></v-text-field> </v-toolbar-title
-                  ><v-spacer></v-spacer>
-                  <v-toolbar-title>
-                    <v-btn color="#cyan darken-1" @click="puntuar" right
-                      >Puntuar</v-btn
-                    >
-                  </v-toolbar-title>
-                </v-toolbar>
-              </v-card>
-            </v-layout>
-          </v-container>
-        </v-content>
-        
       </v-content>
     </v-app>
   </div>
@@ -997,14 +1409,16 @@ export default {
     arrayIngredientes: [],
     element: {},
     entornos: ["Interiores", "Exteriores"],
-    entorno: "",
+    entor: null,
     modalidades: ["Individual", "Grupo"],
-    modalidad: "",
+    modali: null,
     precios: ["Gratis", "Pagando"],
+    prec: null,
     localizaciones: ["Dentro de León", "Fuera de León"],
-    localizacion: "",
+    locali: null,
     actividadesFisicas: ["Con actividad física", "Sin actividad física"],
-    actividadFisica: "",
+    afis: null,
+
     actividades: [
       "Visitar la catedral de León",
       "Visitar la Basílica de San Isidoro",
@@ -1093,28 +1507,20 @@ export default {
       "Visitar Bonilla de la Sierra",
     ],
     items: [],
-    d_ingredientes: false,
     snackbarUsuario: false,
     snackbarNyte: false,
-    snackbarPuntuar: false,
     text: "Error de usuario o contraseña",
     fotoCard: ["../assets/1.jpg", "../assets/casaBotines.jpg"],
-    textActividad: "Gracias por su valoración de esta actividad",
-    textPuntuar: "Puntuación= (min 0 - max 10) y debe escoger una pizza",
     timeout: 3000,
-    puntuando: false,
     segundaFase: false,
-    recomendandoYo: false,
-    recomendandoResto: false,
     aleatorio: false,
-    recomendandoIngre: false,
+    caracActividad: false,
     drawer: null,
-    d_registrarse: false,
-    d_login: false,
+    v_register: false,
+    v_login: false,
     nacimiento_registrar: 1900,
-    puntuacion: 0,
-    nombrecompleto_registrar: "",
-    nombre_registrar: "",
+    name_register: "",
+    user_register: "",
     pass_registrar: "",
     user: "",
     password: "",
@@ -1127,14 +1533,14 @@ export default {
   methods: {
     registrar() {
       var form = new Object();
-      form.nombre = this.nombrecompleto_registrar;
-      form.usuario = this.nombre_registrar;
+      form.nombre = this.name_register;
+      form.usuario = this.user_register;
       form.password = this.pass_registrar;
       form.nacimiento = this.nacimiento_registrar;
 
       this.$http.post("http://localhost:3000/usuarios", form).then(
         () => {
-          this.user = this.nombre_registrar;
+          this.user = this.user_register;
           this.password = this.pass_registrar;
           this.bool_login = true;
           var color = document.getElementById("inspire");
@@ -1148,9 +1554,9 @@ export default {
     },
 
     cerrar_registrar() {
-      this.nombre_registrar = "";
+      this.user_register = "";
       this.pass_registrar = "";
-      this.d_registrarse = false;
+      this.v_register = false;
       this.show2 = false;
       this.array = [];
     },
@@ -1160,10 +1566,7 @@ export default {
       form.usuario = this.nombre_login;
       form.password = this.pass_login;
       this.array = [];
-      this.recomendandoYo = false;
-      this.recomendandoResto = false;
-      this.recomendandoIngre = false;
-      this.puntuando = false;
+      this.caracActividad = false;
       this.aleatorio = false;
 
       if (this.user !== null && this.password !== null) {
@@ -1191,62 +1594,15 @@ export default {
     cerrar_login() {
       this.nombre_login = "";
       this.pass_login = "";
-      this.d_login = false;
+      this.v_login = false;
       this.show2 = false;
       this.array = [];
-    },
-
-    puntuar() {
-      this.array = [];
-
-      this.recomendandoYo = false;
-      this.recomendandoResto = false;
-      this.recomendandoIngre = false;
-      this.aleatorio = false;
-      var pas = true;
-      var cadena = this.puntuacion.toString();
-      var i = 0;
-
-      for (i = 0; i < cadena.length; i++) {
-        if (cadena.charAt(i) == "." || cadena.charAt(i) == ",") {
-          pas = false;
-          i = cadena.length;
-        }
-      }
-
-      if (
-        this.puntuacion <= 10 &&
-        this.puntuacion >= 0 &&
-        this.e1 != undefined &&
-        pas == true
-      ) {
-        var data = {
-          user: this.user,
-          actividad: this.e1,
-          puntuacion: this.puntuacion,
-        };
-        this.$http.post("http://localhost:3000/puntuar", data).then(
-          (response) => {
-            if (response.body.message == true) {
-              this.snackbarNyte = true;
-            }
-          },
-          (response) => {
-            alert(JSON.stringify(response.body));
-          }
-        );
-      } else {
-        this.snackbarPuntuar = true;
-      }
     },
 
     actividadAzar() {
       this.array = [];
       var data = { user: this.user, password: this.password };
-      this.recomendandoYo = false;
-      this.recomendandoResto = false;
-      this.recomendandoIngre = false;
-      this.puntuando = false;
+      this.caracActividad = false;
       this.aleatorio = true;
 
       this.$http.post("http://localhost:3000/actividadAzar", data).then(
@@ -1259,42 +1615,18 @@ export default {
       );
     },
 
-    recomendarMio() {
-      this.array = [];
-      var data = { user: this.user };
-      this.recomendandoYo = true;
-      this.recomendandoResto = false;
-      this.recomendandoIngre = false;
-      this.puntuando = false;
-      this.aleatorio = false;
-
-      this.$http.post("http://localhost:3000/mio", data).then(
-        (response) => {
-          this.array = response.body;
-        },
-        (response) => {
-          alert(JSON.stringify(response.body));
-        }
-      );
-    },
-
     buscarActividadCaracteristicas() {
       this.array = [];
-      this.recomendandoYo = false;
-      this.recomendandoIngre = true;
-      this.puntuando = false;
+      this.caracActividad = true;
       this.aleatorio = false;
-
       var data = {
         user: this.user,
         entorno: this.entor,
-        modalidad: this.modal,
+        /*   modalidad: this.modali,
         precio: this.prec,
         localizacion: this.locali,
-        actividadFisica: this.afis,
+        actividadFisica: this.afis,*/
       };
-
-      this.recomendandoResto = false;
 
       this.$http.post("http://localhost:3000/buscaActividad", data).then(
         (response) => {
@@ -1314,7 +1646,6 @@ export default {
       this.entor = undefined;
       this.modal = undefined;
       this.prec = undefined;
-      this.puntuacion = undefined;
       this.array = [];
       this.user = "";
       this.password = "";

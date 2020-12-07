@@ -105,98 +105,13 @@ app.post("/actividadAzar", function (req, res) {
     });
 });
 
-
-
-app.post("/puntuar", function (req, res) {
-  var user = req.body.user;
-  var actividad = req.body.actividad;
-  var puntuacion = req.body.puntuacion;
-
-  var query = " MATCH (p:Persona)-[v:VALORA]->(a:Actividad) WHERE p.usuario = '" + user + "' AND e.nombre='" + actividad + "' AND exists(v.valoración) RETURN v.valoración"
-
-  var array = [];
-  var session = driver.session();
-  var actividad;
-  var tiene = false;
-
-  // Run a Cypher statement, reading the result in a streaming manner as records arrive:
-  session
-    .run(query)
-    .subscribe({
-      onNext: function (record) {
-
-        if (record.length != 0) {
-          tiene = true;
-        }
-
-      },
-      onCompleted: function () {
-        if (tiene) {
-
-          query = "MATCH(p:Persona)-[v:VALORA]->(a:Actividad) WHERE p.usuario='" + user + "' AND e.nombre='" + actividad + "' SET v.valoración=" + puntuacion;
-
-        }
-        else {
-          query = "START n=node(*), m=node(*) where n.usuario = '" + user + "' and m.nombre = '" + actividad + "' create (n)-[:VALORA{valoración:" + puntuacion + "}]->(m)";
-        }
-        const resultPromise = session.run(query);
-        resultPromise.then(result => {
-          session.close();
-          res.send({ message: true })
-
-        })
-
-
-      },
-      onError: function (error) {
-        console.log(error);
-      }
-    });
-});
-
-
-app.post("/mio", function (req, res) {
-  var user = req.body.user;
-  var session = driver.session();
-  var query = "MATCH (n:Persona{usuario:'" + user + "'})-[v:VALORA]->(a:Actividad) return a,v.valoración";
-
-
-  var array = [];
-  var objeto;
-
-
-  // Run a Cypher statement, reading the result in a streaming manner as records arrive:
-  session
-    .run(query)
-    .subscribe({
-      onNext: function (record) {
-
-        objeto = (record.get(0).properties);
-        objeto.puntuacion = record.get(1).low;
-       
-        array.push(objeto);
-
-      },
-      onCompleted: function () {
-        session.close();
-        res.send(array);
-
-      },
-      onError: function (error) {
-        console.log(error);
-      }
-    });
-
-});
-
-
 app.post("/buscaActividad", function (req, res) {
   var user = req.body.user;
   var entorno = req.body.entorno;
-  var modalidad = req.body.modalidad;
+  /*var modalidad = req.body.modalidad;
   var precio = req.body.precio;
   var localizacion = req.body.localizacion;
-  var actividadFisica = req.body.actividadFisica;
+  var actividadFisica = req.body.actividadFisica;*/
   var session = driver.session();
 
  /* match (Yoav:Person{name:"Yoav"})-[:liked]->(movie:Movie),
@@ -204,11 +119,11 @@ app.post("/buscaActividad", function (req, res) {
   (Yoav)-[:other]->(movie)
   return movie*/
 
-  var query =  "MATCH(a:Actividad)-[:ES]->(e:Entorno) WHERE e.nombre='" + entorno + "',"
-  + "(a)-[:ES]->(m:Modalidad) WHERE m.nombre='" + modalidad + "',"
-  + "(a)-[:ES]->(p:Precio) WHERE p.nombre='" + precio + "',"
-  + "(a)-[:ES]->(l:Localizacion) WHERE l.nombre='" + localizacion + "',"
-  + "(a)-[:ES]->(af:ActividadFisica) WHERE af.nombre='" + actividadFisica + "' return a";
+  var query =  "MATCH(a:Actividad)-[:ES]->(e:Entorno) WHERE e.nombre='" + entorno/* + "', "
+  + "AND (a)-[:HACE]->(m:Modalidad) WHERE m.nombre='" + modalidad + "', "
+  + "AND (a)-[:PASA]->(p:Precio) WHERE p.nombre='" + precio + "', "
+  + "AND (a)-[:ESTA]->(l:Localizacion) WHERE l.nombre='" + localizacion + "', "
+  + "AND (a)-[:SUPONE]->(af:ActividadFisica) WHERE af.nombre='" + actividadFisica */+ "' return a";
   var array = [];
   var objeto;
 
@@ -218,10 +133,7 @@ app.post("/buscaActividad", function (req, res) {
     .run(query)
     .subscribe({
       onNext: function (record) {
-
         objeto = (record.get(0).properties);
-        objeto.actividad = record.get(1).properties.descripcion;
-     
         array.push(objeto);
       },
       onCompleted: function () {
