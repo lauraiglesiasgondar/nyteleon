@@ -1,4 +1,4 @@
-# nyteleon
+# NyteLeón
 
 Para ejecutar el código se debe:
 
