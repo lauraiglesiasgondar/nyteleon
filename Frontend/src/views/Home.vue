@@ -178,12 +178,9 @@
 
           <v-divider vertical></v-divider>
         </v-toolbar-items>
-
-        <v-app-bar-nav-icon>
-          <!-- Añadir aquí la página "Ayuda" y la página "Sobre León" -->
-        </v-app-bar-nav-icon>
       </v-toolbar>
-      <!-- ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡A PARTIR DE AQUI VA LA SEGUNDA PÁGINA!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+       
+       <!-- A partir de aquí es la segunda página -->
       <v-snackbar
         v-model="snackbarUsuario"
         :timeout="timeout"
@@ -230,16 +227,18 @@
           </v-card>
         </v-layout>
 
+        <!-- Opciones para escoger actividad -->
         <v-content v-if="caracActividad">
           <v-container fill-height fluid>
             <v-row align="center" justify="center">
               <v-layout wrap text-center align-center justify-center>
-                <v-card height="100px" width="750px" color="#cyan darken-1">
+                <v-card height="400px" width="750px" color="#cyan darken-1">
                   <v-toolbar
-                    height="100px"
+                    height="400px"
                     width="750px"
                     color="#cyan darken-1"
                   >
+                   <v-col>
                     <v-toolbar-title>
                       <v-select
                         outlined
@@ -250,6 +249,51 @@
                         hide-details
                       ></v-select> </v-toolbar-title
                     ><v-spacer></v-spacer>
+
+                    <v-toolbar-title>
+                      <v-select
+                        outlined
+                        v-model="modali"
+                        :items="modalidades"
+                        menu-props="auto"
+                        label="Modalidad"
+                        hide-details
+                      ></v-select> </v-toolbar-title
+                    ><v-spacer></v-spacer>
+
+                    <v-toolbar-title>
+                      <v-select
+                        outlined
+                        v-model="prec"
+                        :items="precios"
+                        menu-props="auto"
+                        label="Precio"
+                        hide-details
+                      ></v-select> </v-toolbar-title
+                    ><v-spacer></v-spacer>
+
+                    <v-toolbar-title>
+                      <v-select
+                        outlined
+                        v-model="locali"
+                        :items="localizaciones"
+                        menu-props="auto"
+                        label="Localización"
+                        hide-details
+                      ></v-select> </v-toolbar-title
+                    ><v-spacer></v-spacer>
+
+                    <v-toolbar-title>
+                      <v-select
+                        outlined
+                        v-model="afis"
+                        :items="actividadesFisicas"
+                        menu-props="auto"
+                        label="Actividad Física"
+                        hide-details
+                      ></v-select> </v-toolbar-title
+                    ><v-spacer></v-spacer>
+                     </v-col>
 
                     <v-col>
                       <v-toolbar-title>
@@ -265,6 +309,8 @@
               </v-layout>
             </v-row>
           </v-container>
+
+          <!-- Fotos para ir con las actividades -->
           <v-container grid-list-md text-xs-center fluid pa-12>
             <v-layout row wrap fill-height fill-width>
               <v-flex v-for="(item, index) in array" v-bind:key="index">
@@ -1386,9 +1432,7 @@
 
                   <v-img v-else src="../assets/2.jpg" height="400px"></v-img>
                   <v-card-title>{{ item.nombre }}</v-card-title>
-                  <v-card-subtitle>
-                    <!-- {{ item.descripción }} -->
-                  </v-card-subtitle>
+                  
                   <v-card-actions> </v-card-actions>
                 </v-card>
               </v-flex>
@@ -1510,7 +1554,6 @@ export default {
     snackbarUsuario: false,
     snackbarNyte: false,
     text: "Error de usuario o contraseña",
-    fotoCard: ["../assets/1.jpg", "../assets/casaBotines.jpg"],
     timeout: 3000,
     segundaFase: false,
     aleatorio: false,
@@ -1525,8 +1568,8 @@ export default {
     user: "",
     password: "",
     bool_login: false,
-    show1: false, // Visibilidad contraseña login
-    show2: false, // Visibilidad contraseña registrar
+    show1: false, 
+    show2: false, 
     tooltip: false,
   }),
 
@@ -1622,10 +1665,10 @@ export default {
       var data = {
         user: this.user,
         entorno: this.entor,
-        /*   modalidad: this.modali,
+        modalidad: this.modali,
         precio: this.prec,
         localizacion: this.locali,
-        actividadFisica: this.afis,*/
+        actividadFisica: this.afis,
       };
 
       this.$http.post("http://localhost:3000/buscaActividad", data).then(
