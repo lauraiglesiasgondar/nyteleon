@@ -6,7 +6,7 @@ Para ejecutar el código se debe:
 
     2.  Abrir la carpeta Backend en una ventana de Visual Studio Code y ejecutar los siguientes comandos en la terminal:
         2.1.    npm install
-        2.2.    npm node.js
+        2.2.    node app.js
 
     3.  Abrir la carpeta Frontend en otra ventana de Visual Studio Code y ejecutar los siguientes comandos en la terminal:
         3.1.    npm install
