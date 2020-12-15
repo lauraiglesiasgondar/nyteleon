@@ -2,7 +2,7 @@
 
 Para ejecutar el código se debe:
 
-    1.  Crear una nueva base de datos en Neo4j, ejecutarla e insertar en Neo4j Browser los comandos del archivo "ComandoNeo4j.txt".
+    1.  Crear una nueva base de datos en Neo4j con contraseña "123", ejecutarla e insertar en Neo4j Browser los comandos del archivo "ComandoNeo4j.txt".
 
     2.  Abrir la carpeta Backend en una ventana de Visual Studio Code y ejecutar los siguientes comandos en la terminal:
         2.1.    npm install
